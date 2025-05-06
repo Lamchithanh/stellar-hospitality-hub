@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MapPin, Star, Hotel, Spa, Users } from "lucide-react";
+import { MapPin, Star, Hotel, Flower2, Users } from "lucide-react";
 
 // Mock data for hotel listings
 const hotels = [

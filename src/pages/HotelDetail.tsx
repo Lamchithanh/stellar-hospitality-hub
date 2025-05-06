@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MapPin, Star, Calendar, Users, Wifi, Pool, Spa, Utensils, Dumbbell, Info, Clock, Car } from "lucide-react";
+import { MapPin, Star, Calendar, Users, Wifi, Bath, Flower2, Utensils, Dumbbell, Info, Clock, Car } from "lucide-react";
 
 // Mock data for hotel details
 const hotels = {
@@ -27,8 +27,8 @@ const hotels = {
     ],
     amenities: [
       { name: "Free WiFi", icon: Wifi },
-      { name: "Swimming Pool", icon: Pool },
-      { name: "Spa", icon: Spa },
+      { name: "Swimming Pool", icon: Bath },
+      { name: "Spa", icon: Flower2 },
       { name: "Restaurant", icon: Utensils },
       { name: "Fitness Center", icon: Dumbbell },
       { name: "24/7 Service", icon: Clock },
