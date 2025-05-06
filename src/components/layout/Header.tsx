@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, Crown } from "lucide-react";
 import { useTheme } from "next-themes";
 
 export function Header() {
@@ -104,6 +103,14 @@ export function Header() {
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link to="/membership">
+                    <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                      <Crown className="h-4 w-4 mr-1 text-amber-400" />
+                      Thành Viên VIP
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
             <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
@@ -152,6 +159,12 @@ export function Header() {
             </div>
             <Link to="/services" onClick={() => setIsMenuOpen(false)}>
               <Button variant="ghost" className="w-full justify-start">Services</Button>
+            </Link>
+            <Link to="/membership" onClick={() => setIsMenuOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start">
+                <Crown className="h-4 w-4 mr-2 text-amber-400" />
+                Thành Viên VIP
+              </Button>
             </Link>
             <div className="border-t pt-4 flex flex-col gap-2">
               <Link to="/login" onClick={() => setIsMenuOpen(false)}>
