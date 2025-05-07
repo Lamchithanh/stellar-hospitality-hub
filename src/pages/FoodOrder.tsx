@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { 
@@ -17,6 +17,8 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { 
   CreditCard, 
   Banknote, 
@@ -30,7 +32,12 @@ import {
   ChevronRight, 
   ShoppingCart,
   Utensils,
-  CheckCircle
+  CheckCircle,
+  ArrowLeft,
+  User,
+  Building2,
+  ShieldCheck,
+  Loader2
 } from "lucide-react";
 
 // Dữ liệu mẫu các món ăn (copy từ MenuDetail.tsx)
@@ -56,6 +63,41 @@ const menuItems = [
 // Định dạng tiền tệ Việt Nam
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+};
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      when: "beforeChildren",
+      staggerChildren: 0.1,
+      duration: 0.3
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { 
+    y: 0, 
+    opacity: 1,
+    transition: { type: "spring", stiffness: 100 }
+  }
+};
+
+const successVariants = {
+  hidden: { scale: 0.8, opacity: 0 },
+  visible: { 
+    scale: 1, 
+    opacity: 1,
+    transition: { 
+      type: "spring", 
+      stiffness: 80,
+      duration: 0.5
+    }
+  }
 };
 
 const FoodOrder = () => {
@@ -137,21 +179,39 @@ const FoodOrder = () => {
             transition={{ duration: 0.5 }}
             className="text-center mb-8"
           >
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
               Đặt Món
             </h1>
-            <div className="w-24 h-1 bg-primary mx-auto mb-4 rounded-full"></div>
+            <div className="w-24 h-1 bg-primary mx-auto mb-4"></div>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Hoàn tất quá trình đặt món của bạn để thưởng thức ẩm thực tuyệt vời
             </p>
           </motion.div>
         </section>
 
+        {/* Breadcrumb */}
+        <div className="mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center text-sm text-muted-foreground"
+          >
+            <Link to="/" className="hover:text-primary transition-colors">Trang chủ</Link>
+            <span className="mx-2">/</span>
+            <Link to="/menus" className="hover:text-primary transition-colors">Thực đơn</Link>
+            <span className="mx-2">/</span>
+            <Link to={`/menus/${itemId}`} className="hover:text-primary transition-colors">{menuItem.name}</Link>
+            <span className="mx-2">/</span>
+            <span className="text-foreground">Đặt món</span>
+          </motion.div>
+        </div>
+
         {/* Các bước đặt món */}
-        <div className="relative mb-10">
+        <div className="relative mb-12">
           <div className="flex justify-between items-center">
             <div className={`flex flex-col items-center ${activeStep >= 1 ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${activeStep >= 1 ? "border-primary bg-primary/10" : "border-muted-foreground"}`}>
+              <div className={`w-10 h-10 flex items-center justify-center border-2 ${activeStep >= 1 ? "border-primary bg-primary/10" : "border-muted-foreground"}`}>
                 1
               </div>
               <span className="mt-2 text-sm">Thông tin</span>
@@ -163,7 +223,7 @@ const FoodOrder = () => {
               />
             </div>
             <div className={`flex flex-col items-center ${activeStep >= 2 ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${activeStep >= 2 ? "border-primary bg-primary/10" : "border-muted-foreground"}`}>
+              <div className={`w-10 h-10 flex items-center justify-center border-2 ${activeStep >= 2 ? "border-primary bg-primary/10" : "border-muted-foreground"}`}>
                 2
               </div>
               <span className="mt-2 text-sm">Thanh toán</span>
@@ -175,7 +235,7 @@ const FoodOrder = () => {
               />
             </div>
             <div className={`flex flex-col items-center ${activeStep >= 3 ? "text-primary" : "text-muted-foreground"}`}>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${activeStep >= 3 ? "border-primary bg-primary/10" : "border-muted-foreground"}`}>
+              <div className={`w-10 h-10 flex items-center justify-center border-2 ${activeStep >= 3 ? "border-primary bg-primary/10" : "border-muted-foreground"}`}>
                 3
               </div>
               <span className="mt-2 text-sm">Hoàn tất</span>
@@ -192,52 +252,74 @@ const FoodOrder = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
+                variants={containerVariants}
               >
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Thông tin đặt món</CardTitle>
+                <Card className="shadow-md border border-gray-200 dark:border-gray-800 rounded-none bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm">
+                  <CardHeader className="bg-slate-50/80 dark:bg-slate-900/20 border-b border-gray-200 dark:border-gray-800">
+                    <CardTitle className="text-2xl flex items-center">
+                      <div className="w-1.5 h-6 bg-primary mr-3"></div>
+                      Thông tin đặt món
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className="p-6 space-y-8">
                     {/* Thông tin món ăn */}
-                    <div className="flex items-center p-4 bg-primary/5 rounded-lg mb-6">
-                      <div className="w-20 h-20 rounded-md overflow-hidden mr-4">
-                        <img
-                          src={menuItem.image}
-                          alt={menuItem.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-grow">
-                        <h3 className="font-semibold text-lg">{menuItem.name}</h3>
-                        <p className="text-sm text-muted-foreground">{menuItem.category}</p>
-                        <div className="flex justify-between items-center mt-2">
-                          <span className="font-medium text-primary">{formatCurrency(menuItem.price)}</span>
-                          <div className="flex items-center">
-                            <Button 
-                              variant="outline" 
-                              size="icon" 
-                              className="h-8 w-8"
-                              onClick={() => setOrderInfo(prev => ({ ...prev, quantity: Math.max(1, prev.quantity - 1) }))}
-                            >
-                              -
-                            </Button>
-                            <span className="mx-3 font-medium">{orderInfo.quantity}</span>
-                            <Button 
-                              variant="outline" 
-                              size="icon" 
-                              className="h-8 w-8"
-                              onClick={() => setOrderInfo(prev => ({ ...prev, quantity: prev.quantity + 1 }))}
-                            >
-                              +
-                            </Button>
+                    <motion.div 
+                      variants={itemVariants}
+                      className="border border-gray-200 dark:border-gray-800 overflow-hidden"
+                    >
+                      <div className="flex flex-col sm:flex-row">
+                        <div className="w-full sm:w-1/3 md:w-1/4">
+                          <div className="relative h-full">
+                            <img
+                              src={menuItem.image}
+                              alt={menuItem.name}
+                              className="w-full h-full object-cover aspect-square sm:aspect-auto"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent sm:hidden"></div>
+                          </div>
+                        </div>
+                        <div className="flex-grow p-6 bg-white dark:bg-slate-800">
+                          <div className="flex flex-col h-full justify-between">
+                            <div>
+                              <Badge variant="outline" className="rounded-none bg-primary/10 border-0 text-primary mb-2">
+                                {menuItem.category}
+                              </Badge>
+                              <h3 className="font-semibold text-xl mb-2">{menuItem.name}</h3>
+                              <p className="text-sm text-muted-foreground mb-4">{menuItem.description}</p>
+                            </div>
+                            <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-800">
+                              <span className="font-medium text-primary text-lg">{formatCurrency(menuItem.price)}</span>
+                              <div className="flex items-center">
+                                <Button 
+                                  variant="outline" 
+                                  size="icon" 
+                                  className="h-8 w-8 rounded-none border-gray-300 dark:border-gray-700"
+                                  onClick={() => setOrderInfo(prev => ({ ...prev, quantity: Math.max(1, prev.quantity - 1) }))}
+                                >
+                                  -
+                                </Button>
+                                <span className="mx-4 font-medium">{orderInfo.quantity}</span>
+                                <Button 
+                                  variant="outline" 
+                                  size="icon" 
+                                  className="h-8 w-8 rounded-none border-gray-300 dark:border-gray-700"
+                                  onClick={() => setOrderInfo(prev => ({ ...prev, quantity: prev.quantity + 1 }))}
+                                >
+                                  +
+                                </Button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
 
                     {/* Phương thức nhận món */}
-                    <div className="space-y-4">
-                      <Label>Phương thức nhận món</Label>
+                    <motion.div variants={itemVariants} className="space-y-4">
+                      <h3 className="text-lg font-semibold pb-2 border-b border-gray-200 dark:border-gray-800 flex items-center">
+                        <div className="w-1 h-5 bg-primary mr-2"></div>
+                        Phương thức nhận món
+                      </h3>
                       <RadioGroup 
                         defaultValue={orderInfo.deliveryOption}
                         onValueChange={(value) => setOrderInfo(prev => ({ ...prev, deliveryOption: value }))}
@@ -245,150 +327,178 @@ const FoodOrder = () => {
                       >
                         <Label
                           htmlFor="delivery"
-                          className={`flex flex-col items-center justify-between rounded-md border-2 p-4 cursor-pointer ${
+                          className={`flex flex-col items-center justify-between p-4 cursor-pointer border-2 ${
                             orderInfo.deliveryOption === "delivery" 
                               ? "border-primary bg-primary/5" 
-                              : "border-muted hover:bg-accent"
-                          }`}
+                              : "border-gray-200 dark:border-gray-800"
+                          } hover:border-primary/80 hover:bg-primary/5 transition-all duration-300`}
                         >
                           <RadioGroupItem value="delivery" id="delivery" className="sr-only" />
-                          <Package className="h-6 w-6 mb-2" />
-                          <div className="text-center">
+                          <Package className="h-6 w-6 mb-2 text-primary" />
+                          <div className="space-y-1 text-center">
                             <p className="font-medium">Giao hàng</p>
-                            <p className="text-sm text-muted-foreground">Giao đến địa chỉ của bạn</p>
+                            <p className="text-xs text-muted-foreground">Giao hàng đến địa chỉ của bạn</p>
                           </div>
                         </Label>
                         <Label
                           htmlFor="pickup"
-                          className={`flex flex-col items-center justify-between rounded-md border-2 p-4 cursor-pointer ${
+                          className={`flex flex-col items-center justify-between p-4 cursor-pointer border-2 ${
                             orderInfo.deliveryOption === "pickup" 
                               ? "border-primary bg-primary/5" 
-                              : "border-muted hover:bg-accent"
-                          }`}
+                              : "border-gray-200 dark:border-gray-800"
+                          } hover:border-primary/80 hover:bg-primary/5 transition-all duration-300`}
                         >
                           <RadioGroupItem value="pickup" id="pickup" className="sr-only" />
-                          <MapPin className="h-6 w-6 mb-2" />
-                          <div className="text-center">
+                          <Utensils className="h-6 w-6 mb-2 text-primary" />
+                          <div className="space-y-1 text-center">
                             <p className="font-medium">Tự đến lấy</p>
-                            <p className="text-sm text-muted-foreground">Nhận tại nhà hàng</p>
+                            <p className="text-xs text-muted-foreground">Tự đến nhà hàng để lấy món</p>
                           </div>
                         </Label>
                       </RadioGroup>
-                    </div>
+                    </motion.div>
 
-                    {/* Thời gian giao/nhận hàng */}
-                    <div className="space-y-2">
-                      <Label htmlFor="deliveryTime">Thời gian {orderInfo.deliveryOption === "delivery" ? "giao hàng" : "nhận hàng"}</Label>
-                      <Select
-                        value={orderInfo.deliveryTime}
-                        onValueChange={(value) => setOrderInfo(prev => ({ ...prev, deliveryTime: value }))}
-                      >
-                        <SelectTrigger id="deliveryTime">
-                          <SelectValue placeholder="Chọn thời gian" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="asap">Càng sớm càng tốt</SelectItem>
-                          <SelectItem value="30min">Trong vòng 30 phút</SelectItem>
-                          <SelectItem value="1hour">Trong vòng 1 giờ</SelectItem>
-                          <SelectItem value="2hour">Trong vòng 2 giờ</SelectItem>
-                          <SelectItem value="custom">Chọn thời gian cụ thể</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    {/* Thông tin khách hàng */}
+                    <motion.div variants={itemVariants} className="space-y-4">
+                      <h3 className="text-lg font-semibold pb-2 border-b border-gray-200 dark:border-gray-800 flex items-center">
+                        <div className="w-1 h-5 bg-primary mr-2"></div>
+                        Thông tin khách hàng
+                      </h3>
 
-                    {/* Ghi chú đặc biệt */}
-                    <div className="space-y-2">
-                      <Label htmlFor="notes">Ghi chú đặc biệt</Label>
-                      <Textarea
-                        id="notes"
-                        name="notes"
-                        value={orderInfo.notes}
-                        onChange={handleOrderInfoChange}
-                        placeholder="Yêu cầu đặc biệt về món ăn, gia vị, hoặc cách đóng gói..."
-                        className="resize-none"
-                        rows={3}
-                      />
-                    </div>
-
-                    {/* Thông tin liên hệ */}
-                    <div className="space-y-4">
-                      <h3 className="font-semibold text-lg">Thông tin liên hệ</h3>
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="fullName">Họ và tên</Label>
-                          <Input
-                            id="fullName"
-                            name="fullName"
-                            value={customerInfo.fullName}
-                            onChange={handleCustomerInfoChange}
-                            placeholder="Nguyễn Văn A"
-                          />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2 group">
+                          <Label htmlFor="fullName" className="text-sm font-medium group-focus-within:text-primary transition-colors">Họ và tên</Label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                              <User className="h-5 w-5" />
+                            </div>
+                            <Input 
+                              id="fullName" 
+                              name="fullName"
+                              value={customerInfo.fullName}
+                              onChange={handleCustomerInfoChange}
+                              placeholder="Nhập họ và tên" 
+                              className="pl-10 rounded-none py-6 text-base border-gray-300 dark:border-gray-700 focus:border-primary shadow-sm focus:shadow-md transition-all duration-300"
+                              required
+                            />
+                          </div>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">Số điện thoại</Label>
-                          <Input
-                            id="phone"
-                            name="phone"
-                            value={customerInfo.phone}
-                            onChange={handleCustomerInfoChange}
-                            placeholder="0912345678"
-                          />
+                        
+                        <div className="space-y-2 group">
+                          <Label htmlFor="phone" className="text-sm font-medium group-focus-within:text-primary transition-colors">Số điện thoại</Label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                              <Phone className="h-5 w-5" />
+                            </div>
+                            <Input 
+                              id="phone" 
+                              name="phone"
+                              value={customerInfo.phone}
+                              onChange={handleCustomerInfoChange}
+                              placeholder="Nhập số điện thoại" 
+                              className="pl-10 rounded-none py-6 text-base border-gray-300 dark:border-gray-700 focus:border-primary shadow-sm focus:shadow-md transition-all duration-300"
+                              required
+                            />
+                          </div>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="email">Email</Label>
-                          <Input
-                            id="email"
+                      </div>
+                      
+                      <div className="space-y-2 group">
+                        <Label htmlFor="email" className="text-sm font-medium group-focus-within:text-primary transition-colors">Email</Label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                            <Mail className="h-5 w-5" />
+                          </div>
+                          <Input 
+                            id="email" 
                             name="email"
-                            type="email"
                             value={customerInfo.email}
                             onChange={handleCustomerInfoChange}
-                            placeholder="example@email.com"
+                            type="email" 
+                            placeholder="example@email.com" 
+                            className="pl-10 rounded-none py-6 text-base border-gray-300 dark:border-gray-700 focus:border-primary shadow-sm focus:shadow-md transition-all duration-300"
+                            required
                           />
                         </div>
-                        {orderInfo.deliveryOption === "delivery" && (
-                          <>
-                            <div className="space-y-2">
-                              <Label htmlFor="address">Địa chỉ</Label>
-                              <Input
-                                id="address"
-                                name="address"
-                                value={customerInfo.address}
-                                onChange={handleCustomerInfoChange}
-                                placeholder="Số nhà, đường, phường/xã"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="city">Thành phố</Label>
-                              <Select
-                                value={customerInfo.city}
-                                onValueChange={(value) => setCustomerInfo(prev => ({ ...prev, city: value }))}
-                              >
-                                <SelectTrigger id="city">
-                                  <SelectValue placeholder="Chọn thành phố" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="Hà Nội">Hà Nội</SelectItem>
-                                  <SelectItem value="TP HCM">TP HCM</SelectItem>
-                                  <SelectItem value="Đà Nẵng">Đà Nẵng</SelectItem>
-                                  <SelectItem value="Hải Phòng">Hải Phòng</SelectItem>
-                                  <SelectItem value="Cần Thơ">Cần Thơ</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </>
-                        )}
                       </div>
-                    </div>
+                      
+                      {orderInfo.deliveryOption === "delivery" && (
+                        <div className="space-y-2 group">
+                          <Label htmlFor="address" className="text-sm font-medium group-focus-within:text-primary transition-colors">Địa chỉ giao hàng</Label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                              <MapPin className="h-5 w-5" />
+                            </div>
+                            <Input 
+                              id="address" 
+                              name="address"
+                              value={customerInfo.address}
+                              onChange={handleCustomerInfoChange}
+                              placeholder="Nhập địa chỉ giao hàng" 
+                              className="pl-10 rounded-none py-6 text-base border-gray-300 dark:border-gray-700 focus:border-primary shadow-sm focus:shadow-md transition-all duration-300"
+                              required
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
 
+                    {/* Thời gian */}
+                    <motion.div variants={itemVariants} className="space-y-4">
+                      <h3 className="text-lg font-semibold pb-2 border-b border-gray-200 dark:border-gray-800 flex items-center">
+                        <div className="w-1 h-5 bg-primary mr-2"></div>
+                        Thời gian {orderInfo.deliveryOption === "delivery" ? "giao hàng" : "nhận món"}
+                      </h3>
+                      <div className="space-y-2 group">
+                        <Label htmlFor="deliveryTime" className="text-sm font-medium group-focus-within:text-primary transition-colors">Thời gian</Label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                            <Clock className="h-5 w-5" />
+                          </div>
+                          <Input 
+                            id="deliveryTime" 
+                            name="deliveryTime"
+                            value={orderInfo.deliveryTime}
+                            onChange={handleOrderInfoChange}
+                            type="time" 
+                            className="pl-10 rounded-none py-6 text-base border-gray-300 dark:border-gray-700 focus:border-primary shadow-sm focus:shadow-md transition-all duration-300"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 group">
+                        <Label htmlFor="notes" className="text-sm font-medium group-focus-within:text-primary transition-colors">Ghi chú</Label>
+                        <Textarea 
+                          id="notes" 
+                          name="notes"
+                          value={orderInfo.notes}
+                          onChange={handleOrderInfoChange}
+                          placeholder="Nhập yêu cầu đặc biệt hoặc ghi chú khác (nếu có)" 
+                          className="rounded-none min-h-[100px] text-base border-gray-300 dark:border-gray-700 focus:border-primary shadow-sm focus:shadow-md transition-all duration-300"
+                        />
+                      </div>
+                    </motion.div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between border-t border-gray-200 dark:border-gray-800 p-6 bg-slate-50/80 dark:bg-slate-900/20">
                     <Button 
-                      className="w-full mt-6 bg-gradient-to-r from-primary to-primary/80" 
-                      size="lg"
+                      type="button" 
+                      variant="outline" 
+                      className="rounded-none border hover:bg-primary/5 hover:border-primary/40 transition-all duration-300"
+                      onClick={() => navigate(`/menus/${itemId}`)}
+                    >
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Quay lại
+                    </Button>
+                    <Button 
+                      type="button" 
+                      className="rounded-none bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all duration-300"
                       onClick={() => setActiveStep(2)}
                     >
-                      Tiếp tục thanh toán
-                      <ChevronRight className="ml-2 h-4 w-4" />
+                      Thanh toán
+                      <ChevronRight className="h-4 w-4 ml-2" />
                     </Button>
-                  </CardContent>
+                  </CardFooter>
                 </Card>
               </motion.div>
             )}
@@ -399,191 +509,320 @@ const FoodOrder = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Phương thức thanh toán</CardTitle>
+                <Card className="shadow-md border border-gray-200 dark:border-gray-800 rounded-none bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm">
+                  <CardHeader className="bg-slate-50/80 dark:bg-slate-900/20 border-b border-gray-200 dark:border-gray-800">
+                    <CardTitle className="text-2xl flex items-center">
+                      <div className="w-1.5 h-6 bg-primary mr-3"></div>
+                      Phương thức thanh toán
+                    </CardTitle>
+                    <CardDescription>
+                      Chọn phương thức thanh toán phù hợp với bạn
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className="p-6 space-y-6">
                     <RadioGroup 
                       defaultValue={paymentMethod}
                       onValueChange={setPaymentMethod}
-                      className="space-y-3"
+                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
                     >
-                      <div>
-                        <Label
-                          htmlFor="credit_card"
-                          className={`flex items-center justify-between rounded-md border-2 p-4 cursor-pointer ${
-                            paymentMethod === "credit_card" 
-                              ? "border-primary bg-primary/5" 
-                              : "border-muted hover:bg-accent"
-                          }`}
-                        >
-                          <RadioGroupItem value="credit_card" id="credit_card" className="sr-only" />
-                          <div className="flex items-center">
-                            <CreditCard className="h-5 w-5 mr-3 text-primary" />
-                            <div>
-                              <p className="font-medium">Thẻ tín dụng/ghi nợ</p>
-                              <p className="text-sm text-muted-foreground">Visa, Mastercard, JCB</p>
-                            </div>
-                          </div>
-                        </Label>
-                      </div>
-                      <div>
-                        <Label
-                          htmlFor="cash"
-                          className={`flex items-center justify-between rounded-md border-2 p-4 cursor-pointer ${
-                            paymentMethod === "cash" 
-                              ? "border-primary bg-primary/5" 
-                              : "border-muted hover:bg-accent"
-                          }`}
-                        >
-                          <RadioGroupItem value="cash" id="cash" className="sr-only" />
-                          <div className="flex items-center">
-                            <Banknote className="h-5 w-5 mr-3 text-primary" />
-                            <div>
-                              <p className="font-medium">Tiền mặt</p>
-                              <p className="text-sm text-muted-foreground">Thanh toán khi nhận hàng</p>
-                            </div>
-                          </div>
-                        </Label>
-                      </div>
-                      <div>
-                        <Label
-                          htmlFor="qr_code"
-                          className={`flex items-center justify-between rounded-md border-2 p-4 cursor-pointer ${
-                            paymentMethod === "qr_code" 
-                              ? "border-primary bg-primary/5" 
-                              : "border-muted hover:bg-accent"
-                          }`}
-                        >
-                          <RadioGroupItem value="qr_code" id="qr_code" className="sr-only" />
-                          <div className="flex items-center">
-                            <QrCode className="h-5 w-5 mr-3 text-primary" />
-                            <div>
-                              <p className="font-medium">QR Code</p>
-                              <p className="text-sm text-muted-foreground">Quét mã QR qua ứng dụng ngân hàng</p>
-                            </div>
-                          </div>
-                        </Label>
-                      </div>
+                      <Label
+                        htmlFor="credit_card"
+                        className={`flex flex-col items-center justify-between p-6 cursor-pointer border-2 ${
+                          paymentMethod === "credit_card" 
+                            ? "border-primary bg-primary/5" 
+                            : "border-gray-200 dark:border-gray-800"
+                        } hover:border-primary/80 hover:bg-primary/5 transition-all duration-300`}
+                      >
+                        <RadioGroupItem value="credit_card" id="credit_card" className="sr-only" />
+                        <CreditCard className="h-8 w-8 mb-3 text-primary" />
+                        <div className="space-y-1 text-center">
+                          <p className="font-medium">Thẻ tín dụng/ghi nợ</p>
+                          <p className="text-sm text-muted-foreground">Visa, Mastercard, JCB</p>
+                        </div>
+                      </Label>
+
+                      <Label
+                        htmlFor="cash"
+                        className={`flex flex-col items-center justify-between p-6 cursor-pointer border-2 ${
+                          paymentMethod === "cash" 
+                            ? "border-primary bg-primary/5" 
+                            : "border-gray-200 dark:border-gray-800"
+                        } hover:border-primary/80 hover:bg-primary/5 transition-all duration-300`}
+                      >
+                        <RadioGroupItem value="cash" id="cash" className="sr-only" />
+                        <Banknote className="h-8 w-8 mb-3 text-primary" />
+                        <div className="space-y-1 text-center">
+                          <p className="font-medium">Tiền mặt</p>
+                          <p className="text-sm text-muted-foreground">Thanh toán khi nhận hàng</p>
+                        </div>
+                      </Label>
+
+                      <Label
+                        htmlFor="qr_code"
+                        className={`flex flex-col items-center justify-between p-6 cursor-pointer border-2 ${
+                          paymentMethod === "qr_code" 
+                            ? "border-primary bg-primary/5" 
+                            : "border-gray-200 dark:border-gray-800"
+                        } hover:border-primary/80 hover:bg-primary/5 transition-all duration-300`}
+                      >
+                        <RadioGroupItem value="qr_code" id="qr_code" className="sr-only" />
+                        <QrCode className="h-8 w-8 mb-3 text-primary" />
+                        <div className="space-y-1 text-center">
+                          <p className="font-medium">QR Code</p>
+                          <p className="text-sm text-muted-foreground">Quét mã QR qua ứng dụng ngân hàng</p>
+                        </div>
+                      </Label>
+
+                      <Label
+                        htmlFor="bank_transfer"
+                        className={`flex flex-col items-center justify-between p-6 cursor-pointer border-2 ${
+                          paymentMethod === "bank_transfer" 
+                            ? "border-primary bg-primary/5" 
+                            : "border-gray-200 dark:border-gray-800"
+                        } hover:border-primary/80 hover:bg-primary/5 transition-all duration-300`}
+                      >
+                        <RadioGroupItem value="bank_transfer" id="bank_transfer" className="sr-only" />
+                        <Building2 className="h-8 w-8 mb-3 text-primary" />
+                        <div className="space-y-1 text-center">
+                          <p className="font-medium">Chuyển khoản</p>
+                          <p className="text-sm text-muted-foreground">Chuyển khoản qua ngân hàng</p>
+                        </div>
+                      </Label>
                     </RadioGroup>
 
-                    <div className="flex justify-between mt-8">
-                      <Button 
-                        variant="outline" 
-                        onClick={() => setActiveStep(1)}
-                      >
-                        Quay lại
-                      </Button>
-                      <Button 
-                        className="bg-gradient-to-r from-primary to-primary/80" 
-                        onClick={handleOrderSubmit}
-                        disabled={orderCompleted}
-                      >
-                        {orderCompleted ? "Đang xử lý..." : "Hoàn tất đặt món"}
-                      </Button>
+                    <div className="bg-primary/5 border border-primary/10 p-4 rounded-sm">
+                      <h4 className="font-medium mb-2 flex items-center">
+                        <ShieldCheck className="h-5 w-5 mr-2 text-primary" />
+                        Thanh toán an toàn
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        Mọi giao dịch đều được bảo mật và mã hóa. Thông tin thẻ tín dụng sẽ không bao giờ được lưu lại.
+                      </p>
                     </div>
                   </CardContent>
+                  <CardFooter className="flex justify-between border-t border-gray-200 dark:border-gray-800 p-6 bg-slate-50/80 dark:bg-slate-900/20">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      className="rounded-none border hover:bg-primary/5 hover:border-primary/40 transition-all duration-300"
+                      onClick={() => setActiveStep(1)}
+                    >
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Quay lại
+                    </Button>
+                    <Button 
+                      type="button" 
+                      className="rounded-none bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all duration-300"
+                      onClick={handleOrderSubmit}
+                      disabled={orderCompleted}
+                    >
+                      {orderCompleted ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Đang xử lý
+                        </>
+                      ) : (
+                        <>
+                          Hoàn tất đặt món
+                          <ChevronRight className="h-4 w-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                  </CardFooter>
                 </Card>
               </motion.div>
             )}
 
             {activeStep === 3 && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="text-center py-10"
+                initial="hidden"
+                animate="visible"
+                variants={successVariants}
               >
-                <div className="rounded-full bg-green-100 p-4 w-20 h-20 mx-auto mb-6 flex items-center justify-center dark:bg-green-900/20">
-                  <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-500" />
-                </div>
-                <h2 className="text-2xl font-bold mb-4">Đặt món thành công!</h2>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                  Cảm ơn bạn đã đặt món tại Stellar Hospitality. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận đơn hàng.
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <Button variant="outline" onClick={handleBackToMenu}>
-                    Quay lại thực đơn
-                  </Button>
-                  <Button className="bg-gradient-to-r from-primary to-primary/80" onClick={() => navigate("/")}>
-                    Về trang chủ
-                  </Button>
-                </div>
+                <Card className="shadow-lg border border-gray-200 dark:border-gray-800 rounded-none bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm overflow-hidden">
+                  <div className="h-1.5 bg-gradient-to-r from-green-500 via-green-400 to-green-300"></div>
+                  <CardContent className="p-12 text-center">
+                    <motion.div 
+                      className="w-24 h-24 mx-auto mb-8 relative"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ 
+                        type: "spring", 
+                        stiffness: 260, 
+                        damping: 20,
+                        delay: 0.2
+                      }}
+                    >
+                      <div className="absolute inset-0 bg-green-100 dark:bg-green-900/30 animate-ping opacity-25"></div>
+                      <div className="relative bg-green-100 dark:bg-green-900/30 w-full h-full flex items-center justify-center">
+                        <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
+                      </div>
+                    </motion.div>
+                    
+                    <motion.h2 
+                      className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-green-500"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      Đặt món thành công!
+                    </motion.h2>
+                    
+                    <motion.p 
+                      className="text-muted-foreground mb-6 max-w-xl mx-auto"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      Cảm ơn bạn đã đặt món. Đơn hàng của bạn đã được xác nhận và đang được chuẩn bị.
+                      Chúng tôi sẽ liên hệ với bạn qua số điện thoại {customerInfo.phone} để xác nhận.
+                    </motion.p>
+
+                    <motion.div
+                      className="mb-8 p-5 border border-gray-200 dark:border-gray-800 bg-slate-50 dark:bg-slate-900/50 mx-auto max-w-md"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <h3 className="font-semibold text-lg mb-3 text-left">Thông tin đơn hàng</h3>
+                      <div className="space-y-2 text-sm text-left">
+                        <div className="flex justify-between pb-2 border-b border-dashed border-gray-200 dark:border-gray-800">
+                          <span className="text-muted-foreground">Mã đơn hàng:</span>
+                          <span className="font-medium">STL-{Math.floor(Math.random() * 10000).toString().padStart(4, '0')}</span>
+                        </div>
+                        <div className="flex justify-between pb-2 border-b border-dashed border-gray-200 dark:border-gray-800">
+                          <span className="text-muted-foreground">Món:</span>
+                          <span className="font-medium">{menuItem.name} x {orderInfo.quantity}</span>
+                        </div>
+                        <div className="flex justify-between pb-2 border-b border-dashed border-gray-200 dark:border-gray-800">
+                          <span className="text-muted-foreground">Tổng tiền:</span>
+                          <span className="font-medium text-primary">{formatCurrency(calculateTotal())}</span>
+                        </div>
+                        <div className="flex justify-between pb-2">
+                          <span className="text-muted-foreground">Phương thức:</span>
+                          <span className="font-medium">
+                            {paymentMethod === "credit_card" ? "Thẻ tín dụng/ghi nợ" : 
+                             paymentMethod === "cash" ? "Tiền mặt khi nhận hàng" : "Ví điện tử/Chuyển khoản"}
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                    
+                    <motion.div 
+                      className="flex flex-col sm:flex-row justify-center gap-4"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      <Button 
+                        variant="outline" 
+                        className="rounded-none border shadow-sm hover:shadow-md transition-all duration-300"
+                        onClick={handleBackToMenu}
+                      >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Quay lại thực đơn
+                      </Button>
+                      <Button 
+                        className="rounded-none bg-primary hover:bg-primary/90 shadow-sm hover:shadow-md transition-all duration-300"
+                        onClick={() => navigate("/")}
+                      >
+                        Về trang chủ
+                      </Button>
+                    </motion.div>
+                  </CardContent>
+                </Card>
               </motion.div>
             )}
           </div>
 
-          {/* Cột tóm tắt đơn hàng */}
-          <div className="md:col-span-1">
-            {activeStep < 3 && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Card className="bg-white dark:bg-slate-800 shadow-md border-0 sticky top-4">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <ShoppingCart className="mr-2 h-5 w-5" />
-                      Tóm tắt đơn hàng
+          {/* Cột sidebar thông tin đơn hàng */}
+          <div>
+            {activeStep !== 3 && (
+              <div className="sticky top-4">
+                <Card className="shadow-md border border-gray-200 dark:border-gray-800 rounded-none bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm">
+                  <CardHeader className="border-b border-gray-200 dark:border-gray-800 bg-slate-50/80 dark:bg-slate-900/20">
+                    <CardTitle className="flex items-center text-xl">
+                      <ShoppingCart className="h-5 w-5 text-primary mr-2" />
+                      Thông tin đơn hàng
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between py-1">
-                        <span className="font-medium">{menuItem.name}</span>
-                        <span>x{orderInfo.quantity}</span>
-                      </div>
-                      <div className="flex justify-between text-muted-foreground text-sm py-1">
-                        <span>Đơn giá</span>
-                        <span>{formatCurrency(menuItem.price)}</span>
-                      </div>
-                      {orderInfo.deliveryOption === "delivery" && (
-                        <div className="flex justify-between text-muted-foreground text-sm py-1">
-                          <span>Phí giao hàng</span>
-                          <span>{formatCurrency(30000)}</span>
+                  <CardContent className="p-5">
+                    <div className="flex flex-col space-y-3">
+                      <div className="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800">
+                        <div className="flex items-center">
+                          <div className="w-16 h-16 border border-gray-200 dark:border-gray-800 mr-3 overflow-hidden">
+                            <img
+                              src={menuItem.image}
+                              alt={menuItem.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">{menuItem.name}</h4>
+                            <p className="text-sm text-muted-foreground">{menuItem.category}</p>
+                          </div>
                         </div>
-                      )}
-                      <div className="flex justify-between text-muted-foreground text-sm py-1">
-                        <span>Thuế (10%)</span>
-                        <span>{formatCurrency(menuItem.price * orderInfo.quantity * 0.1)}</span>
+                        <div className="text-center">
+                          <span className="text-sm text-muted-foreground">Số lượng</span>
+                          <p className="font-medium">{orderInfo.quantity}</p>
+                        </div>
                       </div>
-                      <div className="border-t border-border mt-2 pt-2">
-                        <div className="flex justify-between font-bold py-1">
-                          <span>Tổng cộng</span>
+
+                      <div className="py-3 border-b border-gray-200 dark:border-gray-800">
+                        <div className="flex justify-between mb-2">
+                          <span className="text-muted-foreground">Giá:</span>
+                          <span>{formatCurrency(menuItem.price)}</span>
+                        </div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-muted-foreground">Số lượng:</span>
+                          <span>x {orderInfo.quantity}</span>
+                        </div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-muted-foreground">Phí giao hàng:</span>
+                          <span>{orderInfo.deliveryOption === "delivery" ? formatCurrency(30000) : "Miễn phí"}</span>
+                        </div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-muted-foreground">Thuế (10%):</span>
+                          <span>{formatCurrency(menuItem.price * orderInfo.quantity * 0.1)}</span>
+                        </div>
+                      </div>
+
+                      <div className="py-3">
+                        <div className="flex justify-between font-bold">
+                          <span>Tổng cộng:</span>
                           <span className="text-primary">{formatCurrency(calculateTotal())}</span>
                         </div>
                       </div>
                     </div>
-
+                  </CardContent>
+                  <CardFooter className="border-t border-gray-200 dark:border-gray-800 p-5 bg-slate-50/80 dark:bg-slate-900/20">
                     {activeStep === 1 && (
-                      <div className="pt-4 space-y-4">
-                        <h3 className="font-semibold flex items-center">
-                          <Utensils className="h-4 w-4 mr-2" />
-                          Thông tin món ăn
-                        </h3>
-                        <p className="text-sm text-muted-foreground">{menuItem.description}</p>
-                        
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2 text-sm">
-                            <Calendar className="h-4 w-4 text-primary" />
-                            <span>Thời gian phục vụ: 10:00 - 22:00</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <Clock className="h-4 w-4 text-primary" />
-                            <span>Thời gian chuẩn bị: ~20 phút</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <Phone className="h-4 w-4 text-primary" />
-                            <span>Hỗ trợ: 0912 345 678</span>
-                          </div>
+                      <div className="w-full">
+                        <div className="mb-3 text-sm text-muted-foreground">
+                          <p className="flex items-center">
+                            <Clock className="h-4 w-4 mr-1.5 inline" />
+                            Thời gian chuẩn bị: 15-30 phút
+                          </p>
+                        </div>
+                        <div className="bg-primary/5 border border-primary/10 p-3 text-sm">
+                          <span className="font-medium">Lưu ý:</span> Vui lòng kiểm tra kỹ thông tin trước khi đặt hàng. Thông tin sẽ được sử dụng để liên hệ và giao hàng.
                         </div>
                       </div>
                     )}
-                  </CardContent>
+
+                    {activeStep === 2 && (
+                      <Button
+                        type="button"
+                        className="w-full rounded-none bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all duration-300"
+                        onClick={handleOrderSubmit}
+                      >
+                        Xác nhận đặt món
+                        <CheckCircle className="h-4 w-4 ml-2" />
+                      </Button>
+                    )}
+                  </CardFooter>
                 </Card>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>

@@ -8,9 +8,23 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MapPin, Star, Wifi, Droplets, Dumbbell, UtensilsCrossed, Flower2, Coffee, Car, Search, SlidersHorizontal } from "lucide-react";
+import { MapPin, Star, Wifi, Droplets, Dumbbell, UtensilsCrossed, Flower2, Coffee, Car, Search, SlidersHorizontal, Bed, Home, ChevronDown, Filter } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Dữ liệu mẫu cho danh sách khách sạn
 const hotels = [
@@ -125,6 +139,11 @@ const HotelListing = () => {
     restaurant: false,
     wifi: false,
     beach: false,
+    rating: null,
+    standard: false,
+    deluxe: false,
+    suite: false,
+    villa: false
   });
 
   // Lọc khách sạn dựa trên tìm kiếm và bộ lọc
@@ -152,311 +171,305 @@ const HotelListing = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-900/30">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="container mx-auto px-4 py-12 flex-grow">
-        <section className="mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="text-center mb-10"
-          >
-            <div className="inline-block bg-primary/10 backdrop-blur-sm px-4 py-2 mb-4 text-sm font-medium tracking-wide text-primary rounded-none">
-              STELLAR HOSPITALITY
-            </div>
-            <h1 className="text-3xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-              Khám Phá Điểm Đến Sang Trọng
-            </h1>
-            <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Trải nghiệm kỳ nghỉ đẳng cấp tại bộ sưu tập khách sạn và khu nghỉ dưỡng cao cấp của chúng tôi tại các điểm đến hàng đầu Việt Nam
-            </p>
-          </motion.div>
-        
-          {/* Phần tìm kiếm */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-12"
-          >
-            <div className="bg-gradient-to-r from-primary/20 to-transparent p-0.5 shadow-lg rounded-none overflow-hidden">
-              <Card className="backdrop-blur-sm bg-white/90 dark:bg-slate-900/90 border-0 rounded-none overflow-hidden">
-                <CardContent className="p-0">
-                  <div className="relative">
-                    <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-primary h-5 w-5" />
-                    <Input
-                      placeholder="Tìm kiếm theo tên khách sạn hoặc địa điểm..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-14 pr-5 py-7 bg-transparent border-0 text-lg focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/70 font-medium"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </motion.div>
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <section className="relative h-[40vh] md:h-[50vh] overflow-hidden">
+          <div className="absolute inset-0 bg-black/40 z-10"></div>
+          <img 
+            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+            alt="Stellar Hotels" 
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          
+          <div className="relative z-20 container mx-auto px-4 md:px-6 h-full flex flex-col justify-center items-center text-center text-white">
+            <motion.h1 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4"
+            >
+              Khách Sạn & Khu Nghỉ Dưỡng
+            </motion.h1>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="w-24 h-[2px] bg-white mb-6"
+            />
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-lg md:text-xl max-w-2xl"
+            >
+              Trải nghiệm đẳng cấp và sang trọng tại các khách sạn tiêu chuẩn 5 sao của Stellar Hospitality
+            </motion.p>
+          </div>
         </section>
         
-        {/* Phần nội dung chính */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-          {/* Phần bộ lọc */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-3 space-y-6"
-          >
-            <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-900/70 border-0 shadow-lg rounded-none overflow-hidden sticky top-4">
-              <div className="bg-gradient-to-r from-primary/20 to-primary/10 p-6">
-                <div className="flex items-center gap-2">
-                  <SlidersHorizontal className="h-5 w-5 text-primary" />
-                  <h2 className="text-xl font-bold">Bộ Lọc</h2>
-                </div>
-              </div>
-              <CardContent className="p-6 space-y-8">
-                <div className="space-y-5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-base flex items-center">
-                      <span className="w-4 h-[2px] bg-primary mr-2"></span>
-                      Khoảng Giá
-                    </h3>
-                    <span className="text-xs text-muted-foreground bg-primary/10 px-2 py-1">VNĐ/đêm</span>
-                  </div>
-                  <div className="space-y-6 px-2">
-                    <Slider
-                      value={priceRange}
-                      min={0}
-                      max={5000000}
-                      step={100000}
-                      onValueChange={setPriceRange}
-                      className="py-2"
-                    />
-                    <div className="flex justify-between text-sm">
-                      <span className="text-primary font-medium bg-primary/10 px-2 py-1">{formatCurrency(priceRange[0])}</span>
-                      <span className="text-primary font-medium bg-primary/10 px-2 py-1">{formatCurrency(priceRange[1])}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-5">
-                  <h3 className="font-semibold text-base flex items-center">
-                    <span className="w-4 h-[2px] bg-primary mr-2"></span>
-                    Tiện Nghi
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-muted/30 p-3 hover:bg-primary/10 transition-colors cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Droplets className="h-4 w-4 text-primary" />
-                          <Label htmlFor="pool" className="cursor-pointer text-sm">Hồ bơi</Label>
-                        </div>
-                        <Switch 
-                          id="pool"
-                          checked={filters.pool}
-                          onCheckedChange={(checked) => setFilters({...filters, pool: checked})}
-                          className="rounded-none data-[state=checked]:bg-primary h-4 w-7"
-                        />
-                      </div>
-                    </div>
-                    <div className="bg-muted/30 p-3 hover:bg-primary/10 transition-colors cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Flower2 className="h-4 w-4 text-primary" />
-                          <Label htmlFor="spa" className="cursor-pointer text-sm">Spa</Label>
-                        </div>
-                        <Switch 
-                          id="spa"
-                          checked={filters.spa}
-                          onCheckedChange={(checked) => setFilters({...filters, spa: checked})}
-                          className="rounded-none data-[state=checked]:bg-primary h-4 w-7"
-                        />
-                      </div>
-                    </div>
-                    <div className="bg-muted/30 p-3 hover:bg-primary/10 transition-colors cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Dumbbell className="h-4 w-4 text-primary" />
-                          <Label htmlFor="gym" className="cursor-pointer text-sm">Phòng tập</Label>
-                        </div>
-                        <Switch 
-                          id="gym"
-                          checked={filters.gym}
-                          onCheckedChange={(checked) => setFilters({...filters, gym: checked})}
-                          className="rounded-none data-[state=checked]:bg-primary h-4 w-7"
-                        />
-                      </div>
-                    </div>
-                    <div className="bg-muted/30 p-3 hover:bg-primary/10 transition-colors cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <UtensilsCrossed className="h-4 w-4 text-primary" />
-                          <Label htmlFor="restaurant" className="cursor-pointer text-sm">Nhà hàng</Label>
-                        </div>
-                        <Switch 
-                          id="restaurant"
-                          checked={filters.restaurant}
-                          onCheckedChange={(checked) => setFilters({...filters, restaurant: checked})}
-                          className="rounded-none data-[state=checked]:bg-primary h-4 w-7"
-                        />
-                      </div>
-                    </div>
-                    <div className="bg-muted/30 p-3 hover:bg-primary/10 transition-colors cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Wifi className="h-4 w-4 text-primary" />
-                          <Label htmlFor="wifi" className="cursor-pointer text-sm">Wifi miễn phí</Label>
-                        </div>
-                        <Switch 
-                          id="wifi"
-                          checked={filters.wifi}
-                          onCheckedChange={(checked) => setFilters({...filters, wifi: checked})}
-                          className="rounded-none data-[state=checked]:bg-primary h-4 w-7"
-                        />
-                      </div>
-                    </div>
-                    <div className="bg-muted/30 p-3 hover:bg-primary/10 transition-colors cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-primary" />
-                          <Label htmlFor="beach" className="cursor-pointer text-sm">Bãi biển riêng</Label>
-                        </div>
-                        <Switch 
-                          id="beach"
-                          checked={filters.beach}
-                          onCheckedChange={(checked) => setFilters({...filters, beach: checked})}
-                          className="rounded-none data-[state=checked]:bg-primary h-4 w-7"
-                        />
-                      </div>
-                    </div>
-                  </div>
+        {/* Search and Filter Section */}
+        <section className="py-12 bg-white dark:bg-zinc-900/30">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-7xl mx-auto bg-white dark:bg-zinc-800/90 shadow-lg p-6 -mt-24 relative z-30">
+              <div className="flex flex-col gap-6">
+                <div className="relative w-full">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <Input 
+                    placeholder="Tìm kiếm theo tên khách sạn hoặc địa điểm..." 
+                    className="pl-10 rounded-none border-zinc-300 dark:border-zinc-700"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                 </div>
 
-                <Button 
-                  variant="outline" 
-                  onClick={() => {
-                    setSearchQuery("");
-                    setPriceRange([0, 5000000]);
-                    setFilters({
-                      pool: false,
-                      spa: false,
-                      gym: false,
-                      restaurant: false,
-                      wifi: false,
-                      beach: false
-                    });
-                  }}
-                  className="w-full bg-gradient-to-r from-primary/20 to-primary/10 border-0 hover:bg-primary/20 text-primary font-medium rounded-none"
-                >
-                  Xóa tất cả bộ lọc
-                </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
-          
-          {/* Danh sách khách sạn */}
-          <div className="lg:col-span-9">
-            <AnimatePresence>
-              {filteredHotels.length > 0 ? (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
-                >
-                  {filteredHotels.map((hotel, index) => (
-                    <motion.div
-                      key={hotel.id}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                    >
-                      <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-900/70 border-0 shadow-lg rounded-none overflow-hidden flex flex-col h-full hover:shadow-xl transition-all duration-300 group">
-                        <div className="h-60 relative overflow-hidden">
-                          <img 
-                            src={hotel.imageUrl} 
-                            alt={hotel.name} 
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                <div className="flex flex-wrap gap-4">
+                  {/* Bộ lọc giá */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="rounded-none border-zinc-300 dark:border-zinc-700 hover:bg-primary/10 hover:text-primary">
+                        <SlidersHorizontal className="h-4 w-4 mr-2" />
+                        Khoảng Giá
+                        <ChevronDown className="h-4 w-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-80 p-4 rounded-none">
+                      <DropdownMenuLabel className="text-base font-semibold">Khoảng Giá</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <div className="space-y-4 py-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">
+                            {formatCurrency(priceRange[0])} - {formatCurrency(priceRange[1])}
+                          </span>
+                        </div>
+                        <div className="space-y-6 px-2">
+                          <Slider
+                            value={priceRange}
+                            min={0}
+                            max={5000000}
+                            step={100000}
+                            onValueChange={setPriceRange}
+                            className="py-2"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                          <div className="absolute top-4 left-4 right-4 flex flex-wrap justify-between gap-2">
-                            {hotel.featured && (
-                              <Badge className="backdrop-blur-sm bg-amber-500/80 hover:bg-amber-600/80 border-0 text-white rounded-none">
-                                Nổi bật
-                              </Badge>
-                            )}
-                            {hotel.discount > 0 && (
-                              <Badge className="backdrop-blur-sm bg-rose-600/80 hover:bg-rose-700/80 border-0 text-white rounded-none">
-                                Giảm {hotel.discount}%
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="absolute bottom-4 left-4 right-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1 backdrop-blur-sm bg-white/20 text-white px-2 py-1 rounded-none">
-                                <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-                                <span className="font-medium">{hotel.rating}</span>
-                              </div>
-                              <div className="backdrop-blur-sm bg-primary/80 text-white px-2 py-1 rounded-none">
-                                <span className="font-bold">{formatCurrency(hotel.price)}</span>
-                                <span className="text-xs"> / đêm</span>
-                              </div>
-                            </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-primary font-medium bg-primary/10 px-3 py-1.5 rounded-none">{formatCurrency(priceRange[0])}</span>
+                            <span className="text-primary font-medium bg-primary/10 px-3 py-1.5 rounded-none">{formatCurrency(priceRange[1])}</span>
                           </div>
                         </div>
-                        <CardContent className="p-5 flex-grow">
-                          <div className="flex items-center text-sm text-muted-foreground mb-2">
-                            <MapPin className="h-4 w-4 mr-1 text-primary" />
-                            <span>{hotel.location}</span>
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  {/* Bộ lọc đánh giá */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="rounded-none border-zinc-300 dark:border-zinc-700 hover:bg-primary/10 hover:text-primary">
+                        <Star className="h-4 w-4 mr-2" />
+                        Đánh Giá
+                        <ChevronDown className="h-4 w-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-80 p-4 rounded-none">
+                      <DropdownMenuLabel className="text-base font-semibold">Đánh Giá</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <div className="space-y-2 py-4">
+                        {[5, 4, 3, 2].map((rating) => (
+                          <div 
+                            key={rating}
+                            className={`group relative overflow-hidden transition-all duration-300 ${
+                              filters.rating === rating ? 'bg-primary/10' : 'hover:bg-primary/5'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between p-3">
+                              <div className="flex items-center gap-3">
+                                <div className={`p-2 rounded-none transition-colors duration-300 ${
+                                  filters.rating === rating ? 'bg-primary text-white' : 'bg-white/50 group-hover:bg-white/80'
+                                }`}>
+                                  <Star className="h-4 w-4" />
+                                </div>
+                                <Label className="cursor-pointer text-sm font-medium">
+                                  {rating} sao trở lên
+                                </Label>
+                              </div>
+                              <Switch 
+                                checked={filters.rating === rating}
+                                onCheckedChange={(checked) => setFilters({...filters, rating: checked ? rating : null})}
+                                className={`rounded-none data-[state=checked]:bg-primary ${
+                                  filters.rating === rating ? 'bg-primary' : 'bg-zinc-200 dark:bg-zinc-700'
+                                }`}
+                              />
+                            </div>
                           </div>
-                          <h3 className="text-xl font-bold group-hover:text-primary transition-colors duration-300 mb-3">{hotel.name}</h3>
-                          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{hotel.description}</p>
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {hotel.amenities.slice(0, 4).map((amenity, idx) => (
-                              <span 
-                                key={idx}
-                                className="text-xs bg-muted/30 backdrop-blur-sm px-3 py-1 rounded-none flex items-center gap-1 hover:bg-primary/10 transition-colors"
-                              >
-                                <AmenityIcon amenity={amenity} />
-                                {amenity}
-                              </span>
-                            ))}
-                            {hotel.amenities.length > 4 && (
-                              <span className="text-xs bg-muted/30 backdrop-blur-sm px-3 py-1 rounded-none hover:bg-primary/10 transition-colors">
-                                +{hotel.amenities.length - 4}
-                              </span>
-                            )}
+                        ))}
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  {/* Bộ lọc tiện nghi */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="rounded-none border-zinc-300 dark:border-zinc-700 hover:bg-primary/10 hover:text-primary">
+                        <Wifi className="h-4 w-4 mr-2" />
+                        Tiện Nghi
+                        <ChevronDown className="h-4 w-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-80 p-4 rounded-none">
+                      <DropdownMenuLabel className="text-base font-semibold">Tiện Nghi</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <div className="space-y-2 py-4">
+                        {[
+                          { id: 'pool', label: 'Hồ bơi', icon: Droplets, checked: filters.pool },
+                          { id: 'spa', label: 'Spa', icon: Flower2, checked: filters.spa },
+                          { id: 'gym', label: 'Phòng tập', icon: Dumbbell, checked: filters.gym },
+                          { id: 'restaurant', label: 'Nhà hàng', icon: UtensilsCrossed, checked: filters.restaurant },
+                          { id: 'wifi', label: 'Wifi miễn phí', icon: Wifi, checked: filters.wifi },
+                          { id: 'beach', label: 'Bãi biển riêng', icon: MapPin, checked: filters.beach }
+                        ].map(({ id, label, icon: Icon, checked }) => (
+                          <div 
+                            key={id}
+                            className={`group relative overflow-hidden transition-all duration-300 ${
+                              checked ? 'bg-primary/10' : 'hover:bg-primary/5'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between p-3">
+                              <div className="flex items-center gap-3">
+                                <div className={`p-2 rounded-none transition-colors duration-300 ${
+                                  checked ? 'bg-primary text-white' : 'bg-white/50 group-hover:bg-white/80'
+                                }`}>
+                                  <Icon className="h-4 w-4" />
+                                </div>
+                                <Label htmlFor={id} className="cursor-pointer text-sm font-medium">
+                                  {label}
+                                </Label>
+                              </div>
+                              <Switch 
+                                id={id}
+                                checked={checked}
+                                onCheckedChange={(checked) => setFilters({...filters, [id]: checked})}
+                                className={`rounded-none data-[state=checked]:bg-primary ${
+                                  checked ? 'bg-primary' : 'bg-zinc-200 dark:bg-zinc-700'
+                                }`}
+                              />
+                            </div>
                           </div>
-                        </CardContent>
-                        <CardFooter className="px-5 pb-5 pt-0">
-                          <div className="w-full bg-gradient-to-r from-primary/20 to-transparent p-0.5 rounded-none">
-                            <Link to={`/hotels/${hotel.id}`} className="w-full">
-                              <Button className="w-full backdrop-blur-sm bg-primary/80 hover:bg-primary/90 text-white border-0 rounded-none">
-                                Xem Chi Tiết
-                              </Button>
-                            </Link>
+                        ))}
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  {/* Bộ lọc loại phòng */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="rounded-none border-zinc-300 dark:border-zinc-700 hover:bg-primary/10 hover:text-primary">
+                        <Bed className="h-4 w-4 mr-2" />
+                        Loại Phòng
+                        <ChevronDown className="h-4 w-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-80 p-4 rounded-none">
+                      <DropdownMenuLabel className="text-base font-semibold">Loại Phòng</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <div className="space-y-2 py-4">
+                        {[
+                          { id: 'standard', label: 'Phòng tiêu chuẩn', icon: Bed, checked: filters.standard },
+                          { id: 'deluxe', label: 'Phòng deluxe', icon: Bed, checked: filters.deluxe },
+                          { id: 'suite', label: 'Suite', icon: Bed, checked: filters.suite },
+                          { id: 'villa', label: 'Villa', icon: Home, checked: filters.villa }
+                        ].map(({ id, label, icon: Icon, checked }) => (
+                          <div 
+                            key={id}
+                            className={`group relative overflow-hidden transition-all duration-300 ${
+                              checked ? 'bg-primary/10' : 'hover:bg-primary/5'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between p-3">
+                              <div className="flex items-center gap-3">
+                                <div className={`p-2 rounded-none transition-colors duration-300 ${
+                                  checked ? 'bg-primary text-white' : 'bg-white/50 group-hover:bg-white/80'
+                                }`}>
+                                  <Icon className="h-4 w-4" />
+                                </div>
+                                <Label htmlFor={id} className="cursor-pointer text-sm font-medium">
+                                  {label}
+                                </Label>
+                              </div>
+                              <Switch 
+                                id={id}
+                                checked={checked}
+                                onCheckedChange={(checked) => setFilters({...filters, [id]: checked})}
+                                className={`rounded-none data-[state=checked]:bg-primary ${
+                                  checked ? 'bg-primary' : 'bg-zinc-200 dark:bg-zinc-700'
+                                }`}
+                              />
+                            </div>
                           </div>
-                        </CardFooter>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="flex flex-col items-center justify-center p-12 backdrop-blur-sm bg-white/70 dark:bg-slate-900/70 border-0 shadow-lg rounded-none"
-                >
-                  <div className="w-20 h-20 bg-primary/10 flex items-center justify-center mb-6 rounded-none">
-                    <Search className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-medium mb-3">Không tìm thấy khách sạn phù hợp</h3>
-                  <p className="text-muted-foreground text-center mb-6 max-w-md">
-                    Vui lòng điều chỉnh tiêu chí tìm kiếm hoặc bộ lọc của bạn để tìm kiếm khách sạn phù hợp
-                  </p>
-                  <div className="bg-gradient-to-r from-primary/20 to-transparent p-0.5 rounded-none">
+                        ))}
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setSearchQuery("");
+                      setPriceRange([0, 5000000]);
+                      setFilters({
+                        pool: false,
+                        spa: false,
+                        gym: false,
+                        restaurant: false,
+                        wifi: false,
+                        beach: false,
+                        rating: null,
+                        standard: false,
+                        deluxe: false,
+                        suite: false,
+                        villa: false
+                      });
+                    }}
+                    className="rounded-none border-zinc-300 dark:border-zinc-700 hover:bg-primary/10 hover:text-primary"
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    Xóa bộ lọc
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Content Section */}
+        <section className="py-16 bg-zinc-50 dark:bg-zinc-900/30">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="max-w-7xl mx-auto">
+              <AnimatePresence>
+                {filteredHotels.length > 0 ? (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+                  >
+                    {filteredHotels.map((hotel, index) => (
+                      <HotelCard key={hotel.id} hotel={hotel} index={index} />
+                    ))}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex flex-col items-center justify-center p-12 backdrop-blur-sm bg-white/70 dark:bg-slate-900/70 border-0 shadow-lg rounded-none"
+                  >
+                    <div className="w-20 h-20 bg-primary/10 flex items-center justify-center mb-6 rounded-none">
+                      <Search className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-medium mb-3">Không tìm thấy khách sạn phù hợp</h3>
+                    <p className="text-muted-foreground text-center mb-6 max-w-md">
+                      Vui lòng điều chỉnh tiêu chí tìm kiếm hoặc bộ lọc của bạn để tìm kiếm khách sạn phù hợp
+                    </p>
                     <Button 
                       variant="outline" 
                       onClick={() => {
@@ -468,22 +481,117 @@ const HotelListing = () => {
                           gym: false,
                           restaurant: false,
                           wifi: false,
-                          beach: false
+                          beach: false,
+                          rating: null,
+                          standard: false,
+                          deluxe: false,
+                          suite: false,
+                          villa: false
                         });
                       }}
-                      className="backdrop-blur-sm bg-white/90 dark:bg-slate-900/90 border-0 hover:bg-primary/10 text-primary font-medium rounded-none min-w-[200px]"
+                      className="rounded-none border-zinc-300 dark:border-zinc-700 hover:bg-primary/10 hover:text-primary"
                     >
                       Xóa bộ lọc
                     </Button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
-        </div>
+        </section>
       </main>
       <Footer />
     </div>
+  );
+};
+
+// Component HotelCard
+const HotelCard = ({ hotel, index }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="group h-full"
+    >
+      <Card className="h-full overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
+        <div className="relative h-64 overflow-hidden">
+          <img 
+            src={hotel.imageUrl} 
+            alt={hotel.name} 
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+          <div className="absolute top-4 left-4">
+            {hotel.featured && (
+              <Badge className="bg-white/90 text-black text-xs px-3 py-1 rounded-none">
+                Nổi bật
+              </Badge>
+            )}
+          </div>
+          <div className="absolute top-4 right-4 bg-white px-2 py-1 text-sm font-semibold text-black rounded-none flex items-center">
+            <Star className="h-3.5 w-3.5 text-amber-500 mr-1 fill-amber-500" />
+            {hotel.rating}
+          </div>
+        </div>
+        
+        <div className="p-6">
+          <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-300">
+            {hotel.name}
+          </h3>
+          
+          <div className="flex items-center text-muted-foreground mb-4">
+            <MapPin className="h-4 w-4 mr-1.5" />
+            <span>{hotel.location}</span>
+          </div>
+          
+          <p className="text-muted-foreground mb-6 line-clamp-2">
+            {hotel.description}
+          </p>
+          
+          <div className="flex flex-wrap gap-2 mb-6">
+            {hotel.amenities.slice(0, 4).map((amenity, idx) => (
+              <span 
+                key={idx}
+                className="text-xs bg-muted/30 px-3 py-1 rounded-none flex items-center gap-1"
+              >
+                <AmenityIcon amenity={amenity} />
+                {amenity}
+              </span>
+            ))}
+            {hotel.amenities.length > 4 && (
+              <span className="text-xs bg-muted/30 px-3 py-1 rounded-none">
+                +{hotel.amenities.length - 4}
+              </span>
+            )}
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-sm text-muted-foreground">Từ</span>
+              <p className="font-semibold">{formatCurrency(hotel.price)}/đêm</p>
+            </div>
+            
+            <Link 
+              to={`/hotels/${hotel.id}`}
+              className="inline-flex items-center text-sm font-medium text-primary hover:underline"
+            >
+              Chi tiết
+              <svg 
+                className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" 
+                xmlns="http://www.w3.org/2000/svg" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </Card>
+    </motion.div>
   );
 };
 

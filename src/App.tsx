@@ -23,6 +23,7 @@ import FoodOrder from "./pages/FoodOrder";
 import TableBooking from "./pages/TableBooking";
 import Membership from "./pages/Membership";
 import Locations from "./pages/Locations";
+import { BookingForm } from "./components/booking/BookingForm";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,9 @@ const App = () => (
             <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/booking" element={<Booking />} />
             <Route path="/booking/:id" element={<Booking />} />
+            <Route path="/service-booking/:id" element={<BookingWrapper type="service" />} />
+            <Route path="/room-booking/:id" element={<BookingWrapper type="room" />} />
+            <Route path="/food-booking/:id" element={<BookingWrapper type="food" />} />
             <Route path="/food-order/:id" element={<FoodOrder />} />
             <Route path="/table-booking/:id" element={<TableBooking />} />
             <Route path="/membership" element={<Membership />} />
@@ -61,5 +65,32 @@ const App = () => (
     </ThemeProvider>
   </QueryClientProvider>
 );
+
+// Wrapper component để render BookingForm với các thuộc tính cần thiết
+import { useLocation, useParams } from "react-router-dom";
+import { Header } from "./components/layout/Header";
+import { Footer } from "./components/layout/Footer";
+
+const BookingWrapper = ({ type }: { type: 'service' | 'room' | 'food' }) => {
+  const { id } = useParams();
+  const location = useLocation();
+  const state = location.state || {}; 
+  const serviceInfo = state.serviceInfo || {};
+  
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900/30">
+      <Header />
+      <BookingForm 
+        type={type}
+        title={serviceInfo.title || ""}
+        subtitle={serviceInfo.subtitle}
+        image={serviceInfo.image}
+        options={serviceInfo.options || []}
+        returnUrl={serviceInfo.returnUrl || `/services/${id}`}
+      />
+      <Footer />
+    </div>
+  );
+};
 
 export default App;

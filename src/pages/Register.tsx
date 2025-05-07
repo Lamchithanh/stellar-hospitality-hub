@@ -9,6 +9,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { motion } from "framer-motion";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { User, Mail, Lock, UserPlus } from "lucide-react";
 
 const Register = () => {
   const [fullName, setFullName] = useState("");
@@ -41,54 +42,73 @@ const Register = () => {
             <div className="w-16 h-0.5 bg-primary mx-auto"></div>
           </div>
           
-          <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-700/30 shadow-xl">
+          <Card className="backdrop-blur-sm bg-white/70 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-700/30 shadow-xl rounded-none">
             <CardHeader className="space-y-1 pb-2">
-              <CardTitle className="text-xl font-bold text-center">Tạo tài khoản mới</CardTitle>
+              <CardTitle className="text-2xl font-bold text-center flex items-center justify-center">
+                <div className="w-1.5 h-6 bg-primary mr-3"></div>
+                Tạo tài khoản mới
+              </CardTitle>
               <CardDescription className="text-center">
                 Nhập thông tin chi tiết để tạo tài khoản của bạn
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-sm font-medium">Họ và tên</Label>
-                  <Input 
-                    id="fullName" 
-                    placeholder="Nguyễn Văn A" 
-                    value={fullName} 
-                    onChange={(e) => setFullName(e.target.value)}
-                    required 
-                    className="bg-transparent border-slate-200 dark:border-slate-700"
-                  />
+                <div className="space-y-2 group">
+                  <Label htmlFor="fullName" className="text-sm font-medium group-focus-within:text-primary transition-colors">Họ và tên</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                      <User className="h-5 w-5" />
+                    </div>
+                    <Input 
+                      id="fullName" 
+                      placeholder="Nguyễn Văn A" 
+                      value={fullName} 
+                      onChange={(e) => setFullName(e.target.value)}
+                      required 
+                      className="pl-10 rounded-none py-6 text-base border-gray-300 dark:border-gray-700 focus:border-primary shadow-sm focus:shadow-md transition-all duration-300"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="email@example.com" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)}
-                    required 
-                    className="bg-transparent border-slate-200 dark:border-slate-700"
-                  />
+                <div className="space-y-2 group">
+                  <Label htmlFor="email" className="text-sm font-medium group-focus-within:text-primary transition-colors">Email</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                      <Mail className="h-5 w-5" />
+                    </div>
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="email@example.com" 
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)}
+                      required 
+                      className="pl-10 rounded-none py-6 text-base border-gray-300 dark:border-gray-700 focus:border-primary shadow-sm focus:shadow-md transition-all duration-300"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium">Mật khẩu</Label>
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    placeholder="••••••••" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)}
-                    required 
-                    className="bg-transparent border-slate-200 dark:border-slate-700"
-                  />
+                <div className="space-y-2 group">
+                  <Label htmlFor="password" className="text-sm font-medium group-focus-within:text-primary transition-colors">Mật khẩu</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-muted-foreground">
+                      <Lock className="h-5 w-5" />
+                    </div>
+                    <Input 
+                      id="password" 
+                      type="password" 
+                      placeholder="••••••••" 
+                      value={password} 
+                      onChange={(e) => setPassword(e.target.value)}
+                      required 
+                      className="pl-10 rounded-none py-6 text-base border-gray-300 dark:border-gray-700 focus:border-primary shadow-sm focus:shadow-md transition-all duration-300"
+                    />
+                  </div>
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full backdrop-blur-sm bg-primary/80 hover:bg-primary/90 text-white border border-primary/20"
+                  className="w-full rounded-none bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all duration-300"
                 >
+                  <UserPlus className="h-5 w-5 mr-2" />
                   Tạo tài khoản
                 </Button>
               </form>
@@ -108,7 +128,7 @@ const Register = () => {
                 <Button 
                   variant="outline" 
                   type="button"
-                  className="bg-transparent border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2"
+                  className="rounded-none bg-transparent border-gray-300 dark:border-gray-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-300"
                 >
                   <FaGoogle className="text-red-500" />
                   <span>Google</span>
@@ -116,7 +136,7 @@ const Register = () => {
                 <Button 
                   variant="outline" 
                   type="button"
-                  className="bg-transparent border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2"
+                  className="rounded-none bg-transparent border-gray-300 dark:border-gray-700 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-300"
                 >
                   <FaFacebook className="text-blue-600" />
                   <span>Facebook</span>

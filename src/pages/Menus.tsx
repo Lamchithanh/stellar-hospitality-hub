@@ -252,182 +252,195 @@ const Menus = () => {
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900/30">
       <Header />
       <main className="container mx-auto px-4 py-8 flex-grow">
-        <section className="mb-10">
+        {/* Hero section */}
+        <section className="mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-center mb-8"
+            className="text-center"
           >
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-              Thực Đơn
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
+              Thực Đơn Đặc Sắc
             </h1>
-            <div className="w-24 h-1 bg-primary mx-auto mb-4 rounded-full"></div>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Khám phá tinh hoa ẩm thực Việt Nam kết hợp với các phong cách ẩm thực quốc tế
+            <div className="w-24 h-1 bg-primary/80 mx-auto mb-6"></div>
+            <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+              Khám phá thế giới ẩm thực đa dạng với những món ăn được chế biến tinh tế từ nguyên liệu tươi ngon nhất.
             </p>
           </motion.div>
         </section>
 
-        {/* Hiển thị món ăn đặc trưng */}
-        <section className="mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <h2 className="text-2xl font-semibold mb-6 flex items-center">
-              <Flame className="h-5 w-5 mr-2 text-primary" />
-              Món Đặc Trưng
+        {/* Món ăn đặc trưng */}
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold flex items-center">
+              <ChefHat className="mr-2 h-6 w-6 text-primary" />
+              <span>Món Ăn Đặc Trưng</span>
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredItems.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
-                >
-                  <Card className="overflow-hidden h-full bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl transition-all duration-300 border-0 group">
-                    <div className="relative h-48 overflow-hidden">
-                      <img 
-                        src={item.image} 
-                        alt={item.name} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            <Link to="/menus" className="text-primary hover:text-primary/80 flex items-center group transition-colors">
+              <span>Xem tất cả</span>
+              <ExternalLink className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredItems.map((item) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 * item.id }}
+              >
+                <Link to={`/menus/${item.id}`}>
+                  <Card className="overflow-hidden h-full shadow-sm hover:shadow-md transition-all duration-300 rounded-none border border-gray-200 dark:border-gray-800 dark:bg-gray-900/30 group">
+                    <div className="relative h-64 overflow-hidden">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute top-3 left-3">
-                        <Badge variant="default" className="bg-amber-500 hover:bg-amber-600">Đặc trưng</Badge>
-                      </div>
-                      {item.new && (
-                        <div className="absolute top-3 right-3">
-                          <Badge variant="secondary">Mới</Badge>
+                      {item.featured && (
+                        <div className="absolute top-0 left-0 bg-primary text-white text-xs font-semibold py-1 px-2.5">
+                          ĐẶC TRƯNG
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      <div className="absolute bottom-4 left-0 right-0 flex justify-center transform translate-y-4 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
-                        <Link to={`/menus/${item.id}`}>
-                          <Button size="sm" variant="secondary" className="bg-white/90 text-slate-900">
-                            <ChefHat className="h-4 w-4 mr-2" />
-                            Xem chi tiết
-                          </Button>
-                        </Link>
+                      {item.new && (
+                        <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-semibold py-1 px-2.5">
+                          MỚI
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                      <div className="absolute bottom-0 left-0 p-6 w-full text-white">
+                        <h3 className="text-xl font-bold mb-1">{item.name}</h3>
+                        <p className="text-sm opacity-90 line-clamp-1 mb-2">{item.description}</p>
+                        <div className="flex justify-between items-center">
+                          <div className="font-semibold text-lg">{formatCurrency(item.price)}</div>
+                          <div className="flex flex-wrap gap-1">
+                            {item.tags.map((tag, idx) => (
+                              <Badge 
+                                key={idx} 
+                                variant="secondary" 
+                                className="bg-white/10 backdrop-blur-sm text-white border-0 flex items-center gap-1"
+                              >
+                                <TagIcon tag={tag} />
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-xl group-hover:text-primary transition-colors duration-300">
-                        {item.name}
-                      </CardTitle>
-                      <CardDescription className="flex flex-wrap gap-2 mt-2">
-                        {item.tags.map((tag, idx) => (
-                          <span 
-                            key={idx}
-                            className="text-xs bg-secondary px-2 py-1 rounded-full flex items-center gap-1"
-                          >
-                            <TagIcon tag={tag} />
-                            {tag}
-                          </span>
-                        ))}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col h-full">
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{item.description}</p>
-                      <div className="flex justify-between items-center mt-auto">
-                        <p className="font-bold text-lg">{formatCurrency(item.price)}</p>
-                        <Link to={`/menus/${item.id}`}>
-                          <Button variant="ghost" size="sm" className="group">
-                            <ExternalLink className="h-4 w-4 mr-1 transition-transform group-hover:translate-x-1" />
-                            Chi tiết
-                          </Button>
-                        </Link>
-                      </div>
-                    </CardContent>
                   </Card>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         </section>
 
-        {/* Hiển thị menu theo danh mục */}
+        {/* Menu chính */}
         <section>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <h2 className="text-2xl font-semibold mb-6">Thực Đơn Theo Danh Mục</h2>
-            <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
-              <TabsList className="grid grid-cols-4 mb-8">
-                <TabsTrigger value="appetizers" className="flex items-center">
+          <h2 className="text-2xl font-bold mb-8 pb-2 border-b border-gray-200 dark:border-gray-800">Thực Đơn</h2>
+          
+          <Tabs defaultValue={activeCategory} onValueChange={setActiveCategory} className="w-full">
+            <div className="mb-10 border-b dark:border-gray-800 overflow-x-auto">
+              <TabsList className="bg-transparent h-auto p-0 rounded-none gap-0 w-full flex justify-start">
+                <TabsTrigger 
+                  value="appetizers"
+                  className="flex-none rounded-none h-12 border-transparent border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent transition-all duration-300"
+                >
                   <Leaf className="h-4 w-4 mr-2" />
                   Khai Vị
                 </TabsTrigger>
-                <TabsTrigger value="main_courses" className="flex items-center">
+                <TabsTrigger 
+                  value="main_courses"
+                  className="flex-none rounded-none h-12 border-transparent border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent transition-all duration-300"
+                >
                   <Flame className="h-4 w-4 mr-2" />
                   Món Chính
                 </TabsTrigger>
-                <TabsTrigger value="desserts" className="flex items-center">
+                <TabsTrigger 
+                  value="desserts"
+                  className="flex-none rounded-none h-12 border-transparent border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent transition-all duration-300"
+                >
                   <Wheat className="h-4 w-4 mr-2" />
                   Tráng Miệng
                 </TabsTrigger>
-                <TabsTrigger value="drinks" className="flex items-center">
+                <TabsTrigger 
+                  value="drinks"
+                  className="flex-none rounded-none h-12 border-transparent border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-transparent transition-all duration-300"
+                >
                   <GlassWater className="h-4 w-4 mr-2" />
                   Đồ Uống
                 </TabsTrigger>
               </TabsList>
+            </div>
 
-              <TabsContent value={activeCategory} className="mt-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filteredItems.map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                    >
-                      <Link to={`/menus/${item.id}`} className="block">
-                        <Card className="flex overflow-hidden bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all duration-300 border-0 group">
-                          <div className="relative w-1/3 overflow-hidden">
-                            <img 
-                              src={item.image} 
-                              alt={item.name} 
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                          </div>
-                          <div className="w-2/3">
-                            <CardHeader className="pb-2">
-                              <div className="flex justify-between items-start">
-                                <CardTitle className="text-base group-hover:text-primary transition-colors duration-300">
-                                  {item.name}
-                                  {item.new && <Badge variant="secondary" className="ml-2 text-xs">Mới</Badge>}
-                                </CardTitle>
-                                <span className="font-bold">{formatCurrency(item.price)}</span>
-                              </div>
-                            </CardHeader>
-                            <CardContent>
-                              <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{item.description}</p>
-                              <div className="flex flex-wrap gap-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {filteredItems.map(item => (
+                <TabsContent key={item.id} value={item.category} className="mt-0">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Card className="rounded-none shadow-sm hover:shadow-md transition-all group border border-gray-200 dark:border-gray-800 dark:bg-gray-900/30 overflow-hidden h-full">
+                      <div className="flex flex-col sm:flex-row h-full">
+                        <div className="sm:w-1/3 relative">
+                          <img 
+                            src={item.image} 
+                            alt={item.name} 
+                            className="h-full w-full object-cover aspect-square sm:aspect-auto transition-transform duration-700 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent sm:bg-gradient-to-l md:hidden"></div>
+                        </div>
+                        <CardContent className="flex-1 flex flex-col justify-between p-5 sm:p-6">
+                          <div>
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex flex-wrap gap-1.5 mb-3">
                                 {item.tags.map((tag, idx) => (
-                                  <span 
-                                    key={idx}
-                                    className="text-xs bg-secondary px-2 py-0.5 rounded-full flex items-center gap-1"
+                                  <Badge 
+                                    key={idx} 
+                                    variant="outline" 
+                                    className="bg-primary/5 border-primary/20 text-xs flex items-center gap-0.5"
                                   >
                                     <TagIcon tag={tag} />
                                     {tag}
-                                  </span>
+                                  </Badge>
                                 ))}
                               </div>
-                            </CardContent>
+                              <div className="text-lg font-bold text-primary">
+                                {formatCurrency(item.price)}
+                              </div>
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">{item.name}</h3>
+                            <p className="text-muted-foreground text-sm mb-6">{item.description}</p>
                           </div>
-                        </Card>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </motion.div>
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                              <CategoryIcon category={item.category} />
+                              <span className="text-sm text-muted-foreground">
+                                {item.category === "appetizers" ? "Khai vị" :
+                                 item.category === "main_courses" ? "Món chính" :
+                                 item.category === "desserts" ? "Tráng miệng" : "Đồ uống"}
+                              </span>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="rounded-none border border-primary/30 hover:bg-primary/5 hover:border-primary transition-colors text-primary"
+                              asChild
+                            >
+                              <Link to={`/menus/${item.id}`}>Xem chi tiết</Link>
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </div>
+                    </Card>
+                  </motion.div>
+                </TabsContent>
+              ))}
+            </div>
+          </Tabs>
         </section>
       </main>
       <Footer />
